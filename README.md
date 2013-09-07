@@ -15,6 +15,15 @@ separate branch named as per the following convention:
 
 **fix_***bugfix_name* *or* **feature_***bugfix_name*
 
+Then, create a new **pull request**, during which you
+should add *at least one other team member* who will
+review your code before merging it in. This acts like
+an inbuilt code-review process.
+
+**Important Note on Merge Conflicts:** Thou shalt resolve
+thy own merge conflicts and not expect thy reviewer to
+do so.
+
 ## GIT Tutorial
 
 If you're new to using GIT, this will help jump-start
