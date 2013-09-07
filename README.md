@@ -2,6 +2,14 @@
 
 Part of coursework at BITS Pilani - Hyderabad Campus.
 
+## Code Style
+
+* KNR-style bracing (all braces start on same line)
+* 4-space tabs for indentation!
+
+Would strongly recommend http://www.sublimetext.com/
+as a primary text-editor. Quite frankly, it kicks ass.
+
 ## Documentation Style
 
 Java-style HTML documentation using Doxygen.
