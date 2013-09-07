@@ -1,0 +1,6 @@
+# Ignore all compiled binaries
+*.exe
+*.out
+
+# Ignore text-editor scratchpad files
+*.*~
