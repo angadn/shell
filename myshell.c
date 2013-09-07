@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
             printf(ERR_STDIN, argv[0], BUF_SIZE);
         }
 
-    } while(strncmp(cmd, CMD_QUIT, strlen(CMD_QUIT)));
+    } while (strncmp(cmd, CMD_QUIT, strlen(CMD_QUIT)) != 0);
 
     free(cmd);
     return 0;
