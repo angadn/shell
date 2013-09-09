@@ -40,44 +40,49 @@ int main(int argc, char **argv) {
     do {
         printf(SHELL_PROMPT);
         if (fgets(cmd, BUF_SIZE, stdin) != NULL) {
-            cmd[strlen(cmd)-1] = '\0'; // Drop the \n
-            tokenize(cmd, " \t", cmd_args, ARGS_LEN);
-            
-            if (strncmp(cmd_args[0], CMD_CD, strlen(CMD_CD)) == 0) {
-                changedir(cmd_args[1]);
-            } else if (strncmp(cmd_args[0], CMD_MKDIR, strlen(CMD_MKDIR)) == 0) {
-                makedir(cmd_args[1]);
-            } else if (strncmp(cmd_args[0], CMD_QUIT, strlen(CMD_QUIT)) == 0) {
-                // Do nothing, we'll be quitting the shell now
-            } else {
-                pid_t pid = fork();
-                if (pid == 0) {
-                    // Executed by Child
-                    execvp(*cmd_args, cmd_args);
-                    // If the following lines are executed,
-                    // then the command didn't exist
-                    printf(ERR_NOTFOUND, cmd_args[0]);
-                    cmd_args[0] = CMD_QUIT;
-                } else if (pid > 0) {
-                    // Executed by Parent
-                    int status;
-                    pid_t cpid = wait(&status);
-
-                    status = status & 0x0F; // Last 8 bits of status are 0 for
-                                            // successful exit
-                    if (status != 0) {
-                        printf(ERR_DEADCHILD, cpid);
-                    }
+            if (strlen(cmd) > 1) {
+                cmd[strlen(cmd)-1] = '\0'; // Drop the \n
+                tokenize(cmd, " \t", cmd_args, ARGS_LEN);
+                
+                if (strncmp(cmd_args[0], CMD_CD, strlen(CMD_CD)) == 0) {
+                    changedir(cmd_args[1]);
+                } else if (strncmp(cmd_args[0], CMD_MKDIR, strlen(CMD_MKDIR)) == 0) {
+                    makedir(cmd_args[1]);
+                } else if (strncmp(cmd_args[0], CMD_QUIT, strlen(CMD_QUIT)) == 0) {
+                    // Do nothing, we'll be quitting the shell now
                 } else {
-                    // Failed to fork a Child
-                    printf(ERR_FORK);
+                    pid_t pid = fork();
+                    if (pid == 0) {
+                        // Executed by Child
+                        execvp(*cmd_args, cmd_args);
+                        // If the following lines are executed,
+                        // then the command didn't exist
+                        printf(ERR_NOTFOUND, cmd_args[0]);
+                        cmd_args[0] = CMD_QUIT;
+                    } else if (pid > 0) {
+                        // Executed by Parent
+                        int status;
+                        pid_t cpid = wait(&status);
+
+                        status = status & 0x0F; // Last 8 bits of status are 0 for
+                                                // successful exit
+                        if (status != 0) {
+                            printf(ERR_DEADCHILD, cpid);
+                        }
+                    } else {
+                        // Failed to fork a Child
+                        printf(ERR_FORK);
+                    }
                 }
             }
         } else {
             printf(ERR_STDIN, argv[0], BUF_SIZE);
         }
 
-    } while (strncmp(cmd_args[0], CMD_QUIT, strlen(CMD_QUIT)) != 0);
+    } while (
+        cmd_args[0] == NULL || 
+        strncmp(cmd_args[0], CMD_QUIT, strlen(CMD_QUIT)) != 0
+    );
 
     free(cmd);
     free(cmd_args);
